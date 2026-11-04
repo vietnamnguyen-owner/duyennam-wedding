@@ -571,8 +571,8 @@
       /* Câu kết: Playfair Display nghiêng, mềm mại, nâu đen,
          căn giữa — khép lại thiệp sau nút bản đồ. Chức danh trong
          câu do JS điền từ từ đầu tiên của ?moi= (vd "bạn" trong
-         "bạn Hữu Thạch"); không có ?moi= thì dùng mặc định "em"
-         (từ "em Viết Khánh"). */
+         "bạn Hữu Thạch"); không có ?moi= thì dùng danh xưng chung
+         "quý khách" (bản công khai, dòng tên khách ẩn hẳn). */
       .invite-thanks {
         margin: 19px auto 0;
         max-width: 26em;
@@ -1086,7 +1086,7 @@
           <path d="M9.5 15 Q15.5 15 15.5 9 Q9.5 9 9.5 15 Z" fill="currentColor" opacity="0.7" />
         </svg>
         <p class="invite-open reveal">Trân trọng kính mời</p>
-        <p class="invite-guest reveal" style="--d: 0.1s" id="guestName">em Viết Khánh</p>
+        <p class="invite-guest reveal" style="--d: 0.1s" id="guestName" hidden></p>
         <p class="invite-sub reveal" style="--d: 0.18s">đến tham dự lễ thành hôn của</p>
         <div class="rule reveal" style="--d: 0.26s" aria-hidden="true">
           <svg class="ornament" viewBox="0 0 220 20" focusable="false">
@@ -1132,7 +1132,7 @@
             Xem bản đồ
           </a>
         </div>
-        <p class="invite-thanks reveal" style="--d: 0.82s" id="inviteThanks">Sự hiện diện của <span id="guestName2">em</span> là niềm vinh hạnh của gia đình ❤</p>
+        <p class="invite-thanks reveal" style="--d: 0.82s" id="inviteThanks">Sự hiện diện của <span id="guestName2">quý khách</span> là niềm vinh hạnh của gia đình ❤</p>
       </div>
     </section>
 
@@ -1408,20 +1408,30 @@
           });
         }
         /* Tên khách mời từ tham số ?moi= trên URL (link cá nhân hoá).
-           Không có hoặc rỗng thì dùng mặc định "em Viết Khánh"
-           (câu kết lấy chức danh "em" — từ đầu tiên).
+           Có ?moi= thì hiện dòng tên khách như cũ (câu kết lấy chức
+           danh — từ đầu tiên của tên). KHÔNG có ?moi= (bản công
+           khai) thì ẩn hẳn dòng tên khách (hidden, không để khoảng
+           trống thừa) và câu kết dùng danh xưng chung "quý khách".
            Gán bằng textContent để tên luôn hiển thị nguyên văn. */
         try {
           var moi = new URLSearchParams(window.location.search).get("moi");
-          var guest = moi && moi.trim() ? moi.trim().slice(0, 80) : "em Viết Khánh";
-          document.getElementById("guestName").textContent = guest;
-          /* Câu kết chỉ dùng chức danh (từ đầu tiên, vd "bạn"
-             trong "bạn Hữu Thạch", "em" trong mặc định), không
-             dùng cả tên */
-          document.getElementById("guestName2").textContent =
-            guest.split(/\s+/)[0];
+          var guestEl = document.getElementById("guestName");
+          if (moi && moi.trim()) {
+            var guest = moi.trim().slice(0, 80);
+            guestEl.textContent = guest;
+            guestEl.hidden = false;
+            /* Câu kết chỉ dùng chức danh (từ đầu tiên, vd "bạn"
+               trong "bạn Hữu Thạch"), không dùng cả tên */
+            document.getElementById("guestName2").textContent =
+              guest.split(/\s+/)[0];
+          } else {
+            guestEl.hidden = true;
+            document.getElementById("guestName2").textContent =
+              "quý khách";
+          }
         } catch (e) {
-          /* URL không đọc được: giữ tên mặc định trong HTML */
+          /* URL không đọc được: giữ mặc định trong HTML (dòng tên
+             khách ẩn, câu kết dùng "quý khách") */
         }
 
         /* Lời mời hiện dần khi lướt tới: bật cờ js để CSS áp trạng
