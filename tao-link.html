@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tạo link mời cưới</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: #F7F1E6;
+    color: #2A2320;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .card {
+    background: #FDFBF7;
+    border: 2px solid #C9A96A;
+    outline: 1px solid #C9A96A;
+    outline-offset: 5px;
+    border-radius: 4px;
+    padding: 36px 28px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  h1 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #2A2320;
+  }
+  .sub {
+    text-align: center;
+    font-size: 14px;
+    color: #8A6D3B;
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+  label {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: #2A2320;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-family: inherit;
+    border: 1px solid #C9A96A;
+    border-radius: 6px;
+    background: #fff;
+    color: #2A2320;
+    margin-bottom: 16px;
+  }
+  input[type="text"]:focus {
+    outline: 2px solid #C9A96A;
+    outline-offset: 1px;
+  }
+  button {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    font-family: inherit;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    min-height: 52px;
+  }
+  .btn-primary {
+    background: #8A6D3B;
+    color: #fff;
+    border: none;
+    font-weight: 600;
+  }
+  .btn-primary:active { background: #6d562e; }
+  .btn-secondary {
+    background: #fff;
+    color: #8A6D3B;
+    border: 1px solid #C9A96A;
+  }
+  .btn-secondary:active { background: #F7F1E6; }
+  .result-wrap { display: none; margin-top: 4px; }
+  .result-wrap.show { display: block; }
+  .result-label {
+    font-size: 15px;
+    margin-bottom: 8px;
+    color: #2A2320;
+  }
+  .link-output {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: 14px;
+    border: 1px solid #C9A96A;
+    border-radius: 6px;
+    background: #F7F1E6;
+    color: #2A2320;
+    word-break: break-all;
+    margin-bottom: 12px;
+    min-height: 60px;
+  }
+  .hint {
+    text-align: center;
+    font-size: 13px;
+    color: #999;
+    margin-top: 20px;
+    font-style: italic;
+  }
+  .copied-msg {
+    text-align: center;
+    color: #8A6D3B;
+    font-size: 14px;
+    margin-top: -4px;
+    margin-bottom: 12px;
+    min-height: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>Tạo link mời cưới</h1>
+  <p class="sub">Duyên &amp; Nam — 28.11.2026</p>
+
+  <label for="guestName">Nhập tên khách mời:</label>
+  <input type="text" id="guestName" placeholder="ví dụ: bạn Hữu Thạch" autocomplete="off">
+
+  <button class="btn-primary" id="btnCreate">Tạo link</button>
+
+  <div class="result-wrap" id="resultWrap">
+    <p class="result-label">Link mời:</p>
+    <div class="link-output" id="linkOutput"></div>
+    <button class="btn-secondary" id="btnCopy">Sao chép link</button>
+    <p class="copied-msg" id="copiedMsg"></p>
+  </div>
+
+  <p class="hint">Trang này chỉ dành cho chủ thiệp.</p>
+</div>
+
+<script>
+(function() {
+  var BASE_URL = 'https://vietnamnguyen-owner.github.io/duyennam-wedding/';
+  var guestInput = document.getElementById('guestName');
+  var btnCreate = document.getElementById('btnCreate');
+  var resultWrap = document.getElementById('resultWrap');
+  var linkOutput = document.getElementById('linkOutput');
+  var btnCopy = document.getElementById('btnCopy');
+  var copiedMsg = document.getElementById('copiedMsg');
+
+  btnCreate.addEventListener('click', function() {
+    var name = guestInput.value.trim();
+    if (!name) {
+      guestInput.style.borderColor = '#c0392b';
+      guestInput.focus();
+      return;
+    }
+    guestInput.style.borderColor = '#C9A96A';
+    var link = BASE_URL + '?moi=' + encodeURIComponent(name);
+    linkOutput.textContent = link;
+    resultWrap.classList.add('show');
+    copiedMsg.textContent = '';
+  });
+
+  guestInput.addEventListener('input', function() {
+    guestInput.style.borderColor = '#C9A96A';
+  });
+  guestInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') btnCreate.click();
+  });
+
+  btnCopy.addEventListener('click', function() {
+    var text = linkOutput.textContent;
+    if (!text) return;
+    function done() {
+      copiedMsg.textContent = 'Đã sao chép ✓';
+      setTimeout(function() { copiedMsg.textContent = ''; }, 2500);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function() { fallback(); });
+    } else {
+      fallback();
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
+</body>
+</html>
