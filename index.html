@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Great+Vibes&family=Inter:wght@600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Dancing+Script:wght@600;700&family=Great+Vibes&family=Inter:wght@600&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
       rel="stylesheet"
     />
     <style>
@@ -437,11 +437,20 @@
         height: auto;
       }
 
+      /* Tên khách mời: font viết tay Dancing Script — hỗ trợ
+         đầy đủ tiếng Việt (subset vietnamese được Google Fonts
+         tự kèm khi font có hỗ trợ), dấu thanh và các chữ đ, ê,
+         ơ, ư hiển thị đúng. Cỡ vừa phải, weight 700 cho nét đủ
+         đậm dễ đọc trên nền giấy be, giữ nguyên màu nâu đậm
+         #2a2320 như cũ. line-height 1.4 để dấu trên/dưới của
+         tiếng Việt không bị cắt. Chỉ áp cho dòng tên khách này,
+         các phần khác của thiệp giữ nguyên font cũ. */
       .invite-guest {
         margin: 18px 0 0;
-        font-size: clamp(28px, 8.2vw, 40px);
-        font-weight: 600;
-        line-height: 1.25;
+        font-family: "Dancing Script", cursive;
+        font-size: clamp(32px, 9vw, 44px);
+        font-weight: 700;
+        line-height: 1.4;
         color: #2a2320;
         overflow-wrap: break-word;
       }
@@ -954,8 +963,8 @@
         }
         .invite-guest {
           margin-top: 14px;
-          font-size: clamp(27px, 7.6vw, 32px);
-          line-height: 1.22;
+          font-size: clamp(30px, 8.4vw, 36px);
+          line-height: 1.4;
         }
         .invite-sub {
           margin-top: 9px;
