@@ -62,6 +62,21 @@
     outline: 2px solid #C9A96A;
     outline-offset: 1px;
   }
+  select {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-family: inherit;
+    border: 1px solid #C9A96A;
+    border-radius: 6px;
+    background: #fff;
+    color: #2A2320;
+    margin-bottom: 16px;
+  }
+  select:focus {
+    outline: 2px solid #C9A96A;
+    outline-offset: 1px;
+  }
   button {
     width: 100%;
     padding: 14px;
@@ -127,7 +142,15 @@
   <p class="sub">Duyên &amp; Nam — 28.11.2026</p>
 
   <label for="guestName">Nhập tên khách mời:</label>
-  <input type="text" id="guestName" placeholder="ví dụ: bạn A" autocomplete="off">
+  <input type="text" id="guestName" placeholder="ví dụ: bạn Hữu Thạch" autocomplete="off">
+
+  <label for="guestGroup">Nhóm khách mời:</label>
+  <select id="guestGroup">
+    <option value="ban">Bạn bè — xưng "chúng mình"</option>
+    <option value="anhchi">Anh chị — xưng "chúng em"</option>
+    <option value="hohang">Họ hàng lớn tuổi — xưng "chúng con"</option>
+    <option value="chau" selected>Cháu — lời mời mặc định</option>
+  </select>
 
   <button class="btn-primary" id="btnCreate">Tạo link</button>
 
@@ -145,6 +168,7 @@
 (function() {
   var BASE_URL = 'https://vietnamnguyen-owner.github.io/duyennam-wedding/';
   var guestInput = document.getElementById('guestName');
+  var groupSelect = document.getElementById('guestGroup');
   var btnCreate = document.getElementById('btnCreate');
   var resultWrap = document.getElementById('resultWrap');
   var linkOutput = document.getElementById('linkOutput');
@@ -160,6 +184,10 @@
     }
     guestInput.style.borderColor = '#C9A96A';
     var link = BASE_URL + '?moi=' + encodeURIComponent(name);
+    var group = groupSelect.value;
+    if (group && group !== 'chau') {
+      link += '&nhom=' + group;
+    }
     linkOutput.textContent = link;
     resultWrap.classList.add('show');
     copiedMsg.textContent = '';
