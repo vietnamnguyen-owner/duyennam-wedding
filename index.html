@@ -1096,7 +1096,7 @@
         </svg>
         <p class="invite-open reveal">Trân trọng kính mời</p>
         <p class="invite-guest reveal" style="--d: 0.1s" id="guestName" hidden></p>
-        <p class="invite-sub reveal" style="--d: 0.18s">đến tham dự lễ thành hôn của</p>
+        <p class="invite-sub reveal" style="--d: 0.18s" id="inviteSub">đến tham dự lễ thành hôn của</p>
         <div class="rule reveal" style="--d: 0.26s" aria-hidden="true">
           <svg class="ornament" viewBox="0 0 220 20" focusable="false">
             <line x1="2" y1="10" x2="84" y2="10" stroke="currentColor" stroke-width="1" opacity="0.6" />
@@ -1423,8 +1423,27 @@
            trống thừa) và câu kết dùng danh xưng chung "quý khách".
            Gán bằng textContent để tên luôn hiển thị nguyên văn. */
         try {
-          var moi = new URLSearchParams(window.location.search).get("moi");
+          var params = new URLSearchParams(window.location.search);
+          var moi = params.get("moi");
           var guestEl = document.getElementById("guestName");
+          /* Xưng hô theo nhóm khách mời — tham số ?nhom= trên URL:
+             ban   → "…của chúng mình" (bạn bè)
+             anhchi → "…của chúng em"  (anh chị)
+             hohang → "…của chúng con" (họ hàng lớn tuổi)
+             Không có ?nhom=, nhom=chau, hoặc giá trị lạ → giữ
+             nguyên câu mặc định trong HTML ("đến tham dự lễ
+             thành hôn của"). Chỉ đổi đúng dòng dẫn này, mọi
+             phần khác của thiệp không đổi. So khớp không phân
+             biệt hoa thường và bỏ khoảng trắng thừa. */
+          var nhom = (params.get("nhom") || "").trim().toLowerCase();
+          var subEl = document.getElementById("inviteSub");
+          if (nhom === "ban") {
+            subEl.textContent = "đến tham dự lễ thành hôn của chúng mình";
+          } else if (nhom === "anhchi") {
+            subEl.textContent = "đến tham dự lễ thành hôn của chúng em";
+          } else if (nhom === "hohang") {
+            subEl.textContent = "đến tham dự lễ thành hôn của chúng con";
+          }
           if (moi && moi.trim()) {
             var guest = moi.trim().slice(0, 80);
             guestEl.textContent = guest;
