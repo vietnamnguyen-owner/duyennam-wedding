@@ -1665,6 +1665,14 @@
            Gán bằng textContent để tên luôn hiển thị nguyên văn. */
         try {
           var moi = new URLSearchParams(window.location.search).get("moi");
+          /* Link cá nhân hoá cho khách (có ?moi=): ẩn HOÀN TOÀN
+             nút "..." tạo link mời ở góc trái trên — khách không
+             thấy, không bấm được. Chỉ khi mở địa chỉ thiệp gốc
+             (không có ?moi=) thì nút mới hiện cho chủ thiệp dùng. */
+          if (moi && moi.trim()) {
+            var moreBtnEl = document.getElementById("moreBtn");
+            if (moreBtnEl) moreBtnEl.style.display = "none";
+          }
           var guest = moi && moi.trim() ? moi.trim().slice(0, 80) : "em Viết Khánh";
           document.getElementById("guestName").textContent = guest;
           /* Câu kết chỉ dùng chức danh (từ đầu tiên, vd "bạn"
