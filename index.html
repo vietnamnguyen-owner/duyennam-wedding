@@ -220,6 +220,52 @@
         will-change: opacity;
       }
 
+      /* Gợi ý cuộn xuống: chỉ dẫn nhỏ căn giữa, sát mép dưới của
+         màn hình đầu tiên — chữ "Lướt xuống để xem" + mũi tên
+         chevron chỉ xuống, trắng ngả vàng gold nhạt, hài hoà với
+         ảnh đầu. Mũi tên nhấp nhô nhẹ lên xuống để thu hút mắt.
+         Độ mờ do JS điều khiển theo vị trí cuộn: hiện rõ khi ở
+         đầu trang, mờ dần và biến mất ngay khi khách bắt đầu
+         cuộn. Ghim fixed như các lớp first look khác;
+         pointer-events: none để không chắn thao tác nào. */
+      .scroll-hint {
+        position: fixed;
+        left: 50%;
+        bottom: calc(16px + env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        color: #f7ecd0;
+        pointer-events: none;
+        text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+        will-change: opacity;
+      }
+      .scroll-hint .hint-text {
+        font-family: "Inter", sans-serif;
+        font-weight: 600;
+        font-size: 13px;
+        letter-spacing: 0.22em;
+        /* bù khoảng giãn sau ký tự cuối để căn giữa thị giác */
+        padding-left: 0.22em;
+        white-space: nowrap;
+      }
+      .scroll-hint .hint-arrow {
+        display: block;
+        width: 20px;
+        height: 20px;
+        animation: hint-bounce 1.9s ease-in-out infinite;
+      }
+      @keyframes hint-bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(6px); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .scroll-hint .hint-arrow { animation: none; }
+      }
+
       /* Giữ nguyên tỉ lệ gốc của Bebas Neue — không kéo giãn ngang.
          Cỡ danh nghĩa 38vw; JS tự co xuống thêm nếu dòng chữ rộng
          hơn khung hình, để chữ luôn nằm gọn, không bị cắt ở viền. */
@@ -1109,6 +1155,16 @@
       <div class="date" id="date">28 · 11 · 2026</div>
     </div>
 
+    <!-- Gợi ý cuộn xuống: nằm giữa, sát mép dưới màn hình đầu
+         tiên; mờ dần và biến mất khi khách bắt đầu cuộn (JS
+         điều khiển opacity theo vị trí cuộn) -->
+    <div class="scroll-hint" id="scrollHint" aria-hidden="true">
+      <span class="hint-text">Lướt xuống để xem</span>
+      <svg class="hint-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+        <path d="M5 9 L12 16 L19 9" />
+      </svg>
+    </div>
+
     <!-- Phần Lời mời: nền giấy be có vân trong luồng trang, trượt lên
          phủ first look khi lướt hết hiệu ứng chữ. Nội dung nằm trong
          khung viền kép vàng đồng, thứ bậc từ trên xuống: lời mời →
@@ -1266,6 +1322,7 @@
         var line1 = document.getElementById("line1");
         var line2 = document.getElementById("line2");
         var dateEl = document.getElementById("date");
+        var scrollHint = document.getElementById("scrollHint");
         var lines = [line1, line2];
 
         /* Số đo khung hình được ĐO MỘT LẦN rồi cache lại (chỉ đo
@@ -1400,6 +1457,14 @@
           /* Ngày cưới hiện sớm hơn: bắt đầu mờ dần từ 65% tiến trình
              cuộn, và hiện đầy đủ đúng khi chữ dừng hẳn ở giữa khung */
           dateEl.style.opacity = easeOut(clamp01((p - 0.65) / 0.35)).toFixed(3);
+
+          /* Gợi ý cuộn xuống: hiện rõ khi ở đầu trang, mờ dần
+             trong ~90px cuộn đầu tiên rồi biến mất hẳn
+             (visibility: hidden khi đã mờ hết để không còn lớp
+             phủ vô hình nào sót lại trên màn hình) */
+          var hintO = 1 - clamp01((y - 8) / 90);
+          scrollHint.style.opacity = hintO.toFixed(3);
+          scrollHint.style.visibility = hintO <= 0 ? "hidden" : "visible";
 
           /* Ảnh chìm dần theo tiến trình cuộn: overlay đen tăng từ 0
              (first look, ảnh sáng rõ 100%) lên tối đa 0,5 khi chữ đã
