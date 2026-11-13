@@ -616,10 +616,10 @@
          căn giữa — khép lại thiệp sau nút bản đồ. Danh xưng trong
          câu do JS điền từ phần xưng hô ở ĐẦU ?moi= (vd "bạn"
          trong "bạn Hữu Thạch"; riêng tên bắt đầu bằng "gia
-         đình" thì danh xưng chỉ là "gia đình") — xem hàm
-         danhXung ở JS; không có ?moi= thì dùng danh xưng
-         chung "quý khách" (bản công khai, dòng tên khách
-         ẩn hẳn). */
+         đình" thì dùng nguyên tên khách, vd "gia đình anh
+         chị") — xem hàm danhXung ở JS; không có ?moi= thì
+         dùng danh xưng chung "quý khách" (bản công khai,
+         dòng tên khách ẩn hẳn). */
       .invite-thanks {
         margin: 19px auto 0;
         max-width: 26em;
@@ -1457,10 +1457,13 @@
         /* Danh xưng cho câu kết, tách từ phần ĐẦU của tên khách.
            Quy tắc:
            - Tên bắt đầu bằng "gia đình" (vd "gia đình anh chị",
-             "gia đình bác Lan"): danh xưng CHỈ là cụm "gia
-             đình" — không lấy thêm phần sau, không lấy riêng
-             chữ "gia". Câu kết thành "Sự hiện diện của gia
-             đình là niềm vinh hạnh…".
+             "gia đình bác Lan"): dùng NGUYÊN TÊN KHÁCH, không
+             chỉ lấy cụm "gia đình" — nếu chỉ lấy "gia đình" thì
+             câu kết thành "Sự hiện diện của gia đình là niềm
+             vinh hạnh của gia đình", trùng "gia đình" hai lần
+             và mất phần sau (vd "anh chị"). Câu kết đúng:
+             "Sự hiện diện của gia đình anh chị là niềm vinh
+             hạnh của gia đình…".
            - Tên bắt đầu bằng từ xưng hô: lấy các từ xưng hô
              liên tiếp ở đầu (vd "bạn" trong "bạn Hữu Thạch",
              "anh" trong "anh Tuấn", "bác" trong "bác Lan").
@@ -1474,7 +1477,7 @@
             lower.push(words[w].toLowerCase());
           }
           if (lower[0] === "gia" && lower[1] === "đình") {
-            return words[0] + " " + words[1];
+            return guest;
           }
           var xungHo = {
             "anh": true, "chị": true, "em": true, "bác": true,
@@ -1528,9 +1531,9 @@
             var guest = moi.trim().slice(0, 80).normalize("NFC");
             guestEl.textContent = guest;
             guestEl.hidden = false;
-            /* Câu kết chỉ dùng danh xưng ở đầu tên (vd "bạn",
-               riêng "gia đình…" thì chỉ "gia đình"), không
-               dùng cả tên đầy đủ */
+            /* Câu kết dùng danh xưng ở đầu tên (vd "bạn");
+               riêng tên bắt đầu bằng "gia đình…" thì dùng
+               nguyên tên khách (vd "gia đình anh chị") */
             document.getElementById("guestName2").textContent =
               danhXung(guest);
           } else {
