@@ -159,6 +159,13 @@
     <div class="link-output" id="linkOutput"></div>
     <button class="btn-secondary" id="btnCopy">Sao chép link</button>
     <p class="copied-msg" id="copiedMsg"></p>
+    <button class="btn-secondary" id="btnShorten">Rút gọn link</button>
+    <div class="result-wrap" id="shortWrap">
+      <p class="result-label">Link rút gọn:</p>
+      <div class="link-output" id="shortOutput"></div>
+      <button class="btn-secondary" id="btnCopyShort">Sao chép link rút gọn</button>
+      <p class="copied-msg" id="shortMsg"></p>
+    </div>
   </div>
 
   <p class="hint">Trang này chỉ dành cho chủ thiệp.</p>
@@ -174,6 +181,11 @@
   var linkOutput = document.getElementById('linkOutput');
   var btnCopy = document.getElementById('btnCopy');
   var copiedMsg = document.getElementById('copiedMsg');
+  var btnShorten = document.getElementById('btnShorten');
+  var shortWrap = document.getElementById('shortWrap');
+  var shortOutput = document.getElementById('shortOutput');
+  var btnCopyShort = document.getElementById('btnCopyShort');
+  var shortMsg = document.getElementById('shortMsg');
 
   btnCreate.addEventListener('click', function() {
     var name = guestInput.value.trim();
@@ -191,6 +203,11 @@
     linkOutput.textContent = link;
     resultWrap.classList.add('show');
     copiedMsg.textContent = '';
+    shortWrap.classList.remove('show');
+    shortOutput.textContent = '';
+    shortMsg.textContent = '';
+    btnShorten.textContent = 'Rút gọn link';
+    btnShorten.disabled = false;
   });
 
   guestInput.addEventListener('input', function() {
@@ -206,6 +223,55 @@
     function done() {
       copiedMsg.textContent = 'Đã sao chép ✓';
       setTimeout(function() { copiedMsg.textContent = ''; }, 2500);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function() { fallback(); });
+    } else {
+      fallback();
+    }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  });
+
+  btnShorten.addEventListener('click', function() {
+    var longUrl = linkOutput.textContent;
+    if (!longUrl) return;
+    btnShorten.textContent = 'Đang rút gọn...';
+    btnShorten.disabled = true;
+    shortMsg.textContent = '';
+    fetch('https://api.shrtco.de/v2/shorten?url=' + encodeURIComponent(longUrl))
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        btnShorten.textContent = 'Rút gọn link';
+        btnShorten.disabled = false;
+        if (data && data.ok && data.result && data.result.full_short_link) {
+          shortOutput.textContent = data.result.full_short_link;
+          shortWrap.classList.add('show');
+        } else {
+          shortMsg.textContent = 'Không rút gọn được, thử lại sau nhé.';
+        }
+      })
+      .catch(function() {
+        btnShorten.textContent = 'Rút gọn link';
+        btnShorten.disabled = false;
+        shortMsg.textContent = 'Không rút gọn được, kiểm tra mạng rồi thử lại nhé.';
+      });
+  });
+
+  btnCopyShort.addEventListener('click', function() {
+    var text = shortOutput.textContent;
+    if (!text) return;
+    function done() {
+      shortMsg.textContent = 'Đã sao chép ✓';
+      setTimeout(function() { shortMsg.textContent = ''; }, 2500);
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(done).catch(function() { fallback(); });
