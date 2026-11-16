@@ -569,6 +569,9 @@
         line-height: 1.45;
         color: rgba(42, 35, 32, 0.78);
       }
+      .invite-sub .nowrap {
+        white-space: nowrap;
+      }
 
       /* Tên cô dâu chú rể: khối chữ lớn nhất, trung tâm của thiệp.
          Đã thu nhỏ ~18% so với bản trước (42/12vw/62 → 35/10vw/51)
@@ -1604,11 +1607,11 @@
           var nhom = (params.get("nhom") || "").trim().toLowerCase();
           var subEl = document.getElementById("inviteSub");
           if (nhom === "ban") {
-            subEl.textContent = "đến tham dự lễ thành hôn của chúng mình";
+            subEl.innerHTML = "đến tham dự lễ thành hôn <span class=\"nowrap\">của chúng mình</span>";
           } else if (nhom === "anhchi") {
-            subEl.textContent = "đến tham dự lễ thành hôn của chúng em";
+            subEl.innerHTML = "đến tham dự lễ thành hôn <span class=\"nowrap\">của chúng em</span>";
           } else if (nhom === "hohang") {
-            subEl.textContent = "đến tham dự lễ thành hôn của chúng con";
+            subEl.innerHTML = "đến tham dự lễ thành hôn <span class=\"nowrap\">của chúng con</span>";
           }
           if (moi && moi.trim()) {
             /* Chuẩn hoá NFC: tên gõ kiểu tổ hợp (chữ cái + dấu
