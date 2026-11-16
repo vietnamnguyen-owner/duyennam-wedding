@@ -247,13 +247,13 @@
     btnShorten.textContent = 'Đang rút gọn...';
     btnShorten.disabled = true;
     shortMsg.textContent = '';
-    fetch('https://api.shrtco.de/v2/shorten?url=' + encodeURIComponent(longUrl))
+    fetch('https://is.gd/create.php?format=json&url=' + encodeURIComponent(longUrl))
       .then(function(res) { return res.json(); })
       .then(function(data) {
         btnShorten.textContent = 'Rút gọn link';
         btnShorten.disabled = false;
-        if (data && data.ok && data.result && data.result.full_short_link) {
-          shortOutput.textContent = data.result.full_short_link;
+        if (data && data.shorturl) {
+          shortOutput.textContent = data.shorturl;
           shortWrap.classList.add('show');
         } else {
           shortMsg.textContent = 'Không rút gọn được, thử lại sau nhé.';
